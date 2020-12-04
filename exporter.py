@@ -2,11 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 import time
+import os
 
 # pull up login page
-driver = webdriver.Chrome()
-driver.get('https://dsm.commercehub.com/')
-time.sleep(2)
+#driver = webdriver.Chrome()
+#driver.get('https://dsm.commercehub.com/')
+#time.sleep(2)
 
 
 def login():
@@ -82,5 +83,12 @@ def update_invoice():
     inv_input.submit()
 
 
+path = os.getcwd()
+dropbox = "/dropbox"
+try:
+    if not os.path.exists(path+dropbox):
+        os.mkdir(path+dropbox)
+except OSError:
+    print("Error: unable to create drop box folder")
 
 #inputs.submit()
