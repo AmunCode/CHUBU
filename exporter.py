@@ -1,13 +1,14 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+import pandas as pd
 import time
 import os
 
 # pull up login page
-#driver = webdriver.Chrome()
-#driver.get('https://dsm.commercehub.com/')
-#time.sleep(2)
+driver = webdriver.Chrome()
+driver.get('https://dsm.commercehub.com/')
+time.sleep(2)
 
 
 def login():
@@ -22,12 +23,13 @@ def login():
     password.send_keys("Miami2020$!@")
 
     driver.find_element_by_name("submit").click()
-    time.sleep(4)
+    time.sleep(6)
 
-def update_tracking():
+
+def update_tracking(order_num, tracking_num, service):
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
-    external.send_keys("68994753")  # replace with variable
+    external.send_keys(order_num)  # replaced with variable
     external.submit()
     time.sleep(1)
 
@@ -39,26 +41,31 @@ def update_tracking():
     ##grab internal comm hub order number
     url = driver.current_url
     number = ''.join([letter for letter in url if letter.isdigit()])
-    tracking = driver.find_element_by_name("order("+number+").box(1).trackingnumber")
-    tracking.send_keys("1Z2V351V0323599220")    #variable replacement
 
-    trackingSelection = Select(driver.find_element_by_id("order("+number+").box(1).shippingmethod"))
-    trackingSelection.select_by_visible_text("UPS Ground")   #varialble replacement to do
+    tracking = driver.find_element_by_name("order("+number+").box(1).trackingnumber")
+    tracking.send_keys(tracking_num)                                                       #variable replacement
+
+    tracking_selection = Select(driver.find_element_by_id("order("+number+").box(1).shippingmethod"))
+    if service == 'GROUND':
+        tracking_selection.select_by_visible_text("UPS Ground")                            #varialble replacement to do
+    elif service == '2ND DAY AIR':
+        tracking_selection.select_by_visible_text("UPS 2nd Day Air")
+    elif service == 'NEXT DAY AIR':
+        tracking_selection.select_by_visible_text("UPS Next Day Air")
 
     #find ship quantity field and enter 1, nothing else yet.
-    readQuantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
-    qty = readQuantity[15].text
+    read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
+    qty = read_quantity[15].text
 
     inputs = driver.find_elements(By.TAG_NAME, 'input')
-    print(len(inputs))
     ship_quantity = inputs[25]
     ship_quantity.send_keys(qty)
     ship_quantity.submit()
 
-def update_invoice():
+def update_invoice(order_num, invoice_num):
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
-    external.send_keys("68994753")  # replace with variable
+    external.send_keys(order_num)  # replaced with variable
     external.submit()
     time.sleep(1)
 
@@ -69,7 +76,7 @@ def update_invoice():
     number = ''.join([letter for letter in url if letter.isdigit()])
     time.sleep(2)
     inv_input = driver.find_element_by_name("order("+number+").invoicenumber")
-    inv_input.send_keys('4499431')
+    inv_input.send_keys(invoice_num)
 
     inputs = driver.find_elements(By.TAG_NAME, 'input')
     invoiceable = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
@@ -80,15 +87,45 @@ def update_invoice():
     qty_field = inputs[-6]
     qty_field.send_keys(count)
 
-    inv_input.submit()
+    outs = driver.find_elements_by_class_name("chub-button")
+    outs[1].click()
+
+def make_dropbox():
+    path = os.getcwd()
+    dropbox = "/dropbox"
+    try:
+        if not os.path.exists(path+dropbox):
+            os.mkdir(path+dropbox)
+    except OSError:
+        print("Error: unable to create drop box folder")
 
 
-path = os.getcwd()
-dropbox = "/dropbox"
-try:
-    if not os.path.exists(path+dropbox):
-        os.mkdir(path+dropbox)
-except OSError:
-    print("Error: unable to create drop box folder")
+df = pd.read_excel('macy.xlsx', columns=['order_number', 'Tracking', 'Invoice', 'Carrier'])
 
-#inputs.submit()
+#print(df)
+
+# current1 = df.loc[0,:]
+# current2 = df.loc[1,:]
+# current3 = df.loc[2,:]
+#
+# print(current1[0])
+# print(current2[0])
+# print(current3[0])
+
+login()
+
+for order in range(0, len(df)):
+    current_order = df.loc[order, :]
+    order_number = str(current_order[0])
+    order_tracking = str(current_order[1])
+    order_invoice = str(current_order[2])
+    order_carrier = str(current_order[3])
+    try:
+        update_tracking(order_number, order_tracking, order_carrier)
+    except EOFError:
+        pass
+    time.sleep(3)
+    try:
+        update_invoice(order_number, order_invoice)
+    except EOFError:
+        pass
