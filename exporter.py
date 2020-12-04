@@ -100,7 +100,7 @@ def make_dropbox():
         print("Error: unable to create drop box folder")
 
 
-df = pd.read_excel('macy.xlsx', columns=['order_number', 'Tracking', 'Invoice', 'Carrier'])
+orders = pd.read_excel('orders.xlsx', columns=['Order_Number', 'Tracking', 'Invoice', 'Carrier'])
 
 #print(df)
 
@@ -114,11 +114,12 @@ df = pd.read_excel('macy.xlsx', columns=['order_number', 'Tracking', 'Invoice', 
 
 login()
 
-for order in range(0, len(df)):
-    current_order = df.loc[order, :]
+
+for order in range(0, len(orders)):
+    current_order = orders.loc[order, :]
     order_number = str(current_order[0])
     order_tracking = str(current_order[1])
-    order_invoice = str(current_order[2])
+    order_invoice = str(''.join([letter for letter in (current_order[2]) if letter.isdigit()]))
     order_carrier = str(current_order[3])
     try:
         update_tracking(order_number, order_tracking, order_carrier)
@@ -129,3 +130,4 @@ for order in range(0, len(df)):
         update_invoice(order_number, order_invoice)
     except EOFError:
         pass
+    time.sleep(3)
