@@ -119,7 +119,10 @@ for order in range(0, len(orders)):
     current_order = orders.loc[order, :]
     order_number = str(current_order[0])
     order_tracking = str(current_order[1])
-    order_invoice = str(''.join([letter for letter in (current_order[2]) if letter.isdigit()]))
+    try:
+        order_invoice = str(''.join([letter for letter in (current_order[2]) if letter.isdigit()]))
+    except:
+        order_invoice = str(current_order[2])
     order_carrier = str(current_order[3])
     try:
         update_tracking(order_number, order_tracking, order_carrier)
