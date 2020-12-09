@@ -178,8 +178,8 @@ def make_dropbox():
         print("Error: unable to create drop box folder")
 
 
-orders = pd.read_excel('orders.xlsx', columns=['Order_Number', 'Tracking', 'Invoice', 'Carrier'])
-
+orders = pd.read_excel('orders.xlsx', columns=['Order_Number', 'Tracking', 'Invoice', 'Carrier', 'Status'])
+writer = pd.ExcelWriter('orders.xlsx', engine='xlsxwriter')
 #print(df)
 
 # current1 = df.loc[0,:]
@@ -192,6 +192,7 @@ orders = pd.read_excel('orders.xlsx', columns=['Order_Number', 'Tracking', 'Invo
 
 login()
 
+error_array = []
 
 for order in range(0, len(orders)):
     current_order = orders.loc[order, :]
@@ -207,27 +208,33 @@ for order in range(0, len(orders)):
     if order_merchant == 'BEDBATH-DS':
         try:
             update_tracking_bbb(order_number, order_tracking, order_carrier)
-        except NoSuchElementException:
+        except (NoSuchElementException, ElementNotInteractableException):
             continue
         time.sleep(3)
     if order_merchant == 'BEDBATH-DS':
         try:
             update_invoice_bbb(order_number, order_invoice)
-        except EOFError:
-            pass
+        except (NoSuchElementException, ElementNotInteractableException):
+            continue
         time.sleep(3)
 
     elif order_merchant == 'MACYS001':
         try:
             update_tracking_macys(order_number, order_tracking, order_carrier)
-        except NoSuchElementException:
+        except (NoSuchElementException, ElementNotInteractableException):
+            error_array.append(order_number)
             continue
         time.sleep(3)
         try:
             update_invoice_macys(order_number, order_invoice)
-        except EOFError:
-            pass
+        except(NoSuchElementException, ElementNotInteractableException):
+            error_array.append(order_number)
+            continue
         time.sleep(3)
     else:
         print('ERROR: This merchant has not been set up for uploading.')
+
+print(len(error_array))
+with open("error file.txt", "w") as error_file:
+    error_file.write("\n".join(list(error_array)))
 
