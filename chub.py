@@ -4,27 +4,31 @@ from selenium.webdriver.support.ui import Select
 import time
 import os
 
-# pull up login page
-driver = webdriver.Chrome()
-driver.get('https://dsm.commercehub.com/')
-time.sleep(2)
 
-def login():
+# pull up login page
+def launch_driver():
+    driver = webdriver.Chrome()
+    driver.get('https://dsm.commercehub.com/')
+    return driver
+
+
+def login(login_id, login_password, driver):
     # enter username
+    time.sleep(2)
     username = driver.find_element_by_id("username")
     username.clear()
-    username.send_keys("Jegson")
+    username.send_keys(login_id)
 
     # enter user password
     password = driver.find_element_by_id("password")
     password.clear()
-    password.send_keys("Miami2020$!@")
+    password.send_keys(login_password)
 
     driver.find_element_by_name("submit").click()
     time.sleep(6)
 
 
-def update_tracking_macys(order_num, tracking_num, service):
+def update_tracking_macys(order_num, tracking_num, service, driver):
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -36,7 +40,7 @@ def update_tracking_macys(order_num, tracking_num, service):
     driver.find_element_by_class_name("chub-button").click()
     time.sleep(2)
 
-    ##grab internal comm hub order number
+    # grab internal comm hub order number
     url = driver.current_url
     number = ''.join([letter for letter in url if letter.isdigit()])
 
@@ -55,8 +59,7 @@ def update_tracking_macys(order_num, tracking_num, service):
     elif service == 'GROUND SERVICE':
         tracking_selection.select_by_visible_text("FedEx Ground")
 
-
-    #find ship quantity field and enter 1, nothing else yet.
+    # find ship quantity field and enter 1, nothing else yet.
     read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
     qty = read_quantity[15].text
 
@@ -65,7 +68,8 @@ def update_tracking_macys(order_num, tracking_num, service):
     ship_quantity.send_keys(qty)
     ship_quantity.submit()
 
-def update_tracking_bbb(order_num, tracking_num, service):
+
+def update_tracking_staples(order_num, tracking_num, invoice_num, service, driver):
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -77,7 +81,50 @@ def update_tracking_bbb(order_num, tracking_num, service):
     driver.find_element_by_class_name("chub-button").click()
     time.sleep(2)
 
-    ##grab internal comm hub order number
+    # grab internal comm hub order number
+    url = driver.current_url
+    number = ''.join([letter for letter in url if letter.isdigit()])
+
+    inv_input = driver.find_element_by_name("order(" + number + ").invoicenumber")
+    inv_input.send_keys(invoice_num)
+
+    tracking = driver.find_element_by_name("order("+number+").box(1).trackingnumber")
+    tracking.send_keys(tracking_num)                                                       #variable replacement
+
+    tracking_selection = Select(driver.find_element_by_id("order("+number+").box(1).shippingmethod"))
+    if service == 'GROUND':
+        tracking_selection.select_by_visible_text("UPS Ground")                            #varialble replacement to do
+    elif service == '2ND DAY AIR':
+        tracking_selection.select_by_visible_text("UPS 2nd Day Air")
+    elif service == 'NEXT DAY AIR':
+        tracking_selection.select_by_visible_text("UPS Next Day Air")
+    elif service == 'HOME DELIVERY':
+        tracking_selection.select_by_visible_text("FedEx Home Delivery")
+    elif service == 'GROUND SERVICE':
+        tracking_selection.select_by_visible_text("FedEx Ground")
+
+    # find ship quantity field and enter 1, nothing else yet.
+    read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
+    qty = read_quantity[17].text
+
+    inputs = driver.find_elements(By.TAG_NAME, 'input')
+    ship_quantity = inputs[30]
+    ship_quantity.send_keys(qty)
+    ship_quantity.submit()
+
+def update_tracking_bbb(order_num, tracking_num, service, driver):
+    external = driver.find_element_by_id("quicksearchCriteria")
+    external.clear()
+    external.send_keys(order_num)  # replaced with variable
+    external.submit()
+    time.sleep(1)
+
+    action = Select(driver.find_element_by_id("action"))
+    action.select_by_visible_text('Ship')
+    driver.find_element_by_class_name("chub-button").click()
+    time.sleep(2)
+
+    # grab internal comm hub order number
     url = driver.current_url
     number = ''.join([letter for letter in url if letter.isdigit()])
 
@@ -96,8 +143,7 @@ def update_tracking_bbb(order_num, tracking_num, service):
     elif service == 'GROUND SERVICE':
         tracking_selection.select_by_visible_text("FedEx Ground")
 
-
-    #find ship quantity field and enter 1, nothing else yet.
+    # find ship quantity field and enter 1, nothing else yet.
     read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
     qty = read_quantity[17].text
 
@@ -106,7 +152,8 @@ def update_tracking_bbb(order_num, tracking_num, service):
     ship_quantity.send_keys(qty)
     ship_quantity.submit()
 
-def update_invoice_macys(order_num, invoice_num):
+
+def update_invoice_macys(order_num, invoice_num, driver):
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -127,7 +174,7 @@ def update_invoice_macys(order_num, invoice_num):
 
     count = invoiceable[-2].text
 
-    #read the quantity to be invoiced and put the value in the next field
+    # read the quantity to be invoiced and put the value in the next field
     qty_field = inputs[-6]
     qty_field.send_keys(count)
 
@@ -135,7 +182,7 @@ def update_invoice_macys(order_num, invoice_num):
     submission_fields[1].click()
 
 
-def update_invoice_bbb(order_num, invoice_num):
+def update_invoice_bbb(order_num, invoice_num, driver):
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
