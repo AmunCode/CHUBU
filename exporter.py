@@ -63,7 +63,7 @@ while launch_driver:
         elif order_merchant == 'STAPLESADV' or 'QUILL':
             try:
                 chub.update_tracking_staples(order_number, order_tracking, order_invoice, order_carrier, site)
-            except (NoSuchElementException, ElementNotInteractableException):
+            except (NoSuchElementException, ElementNotInteractableException, TypeError):
                 error_array.append(order_number)
                 continue
             time.sleep(3)
@@ -74,5 +74,5 @@ while launch_driver:
         error_file.write("\n".join(list(error_array)))
 
     launch_driver = False
-site.close()
+#site.close()
 

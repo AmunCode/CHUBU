@@ -104,13 +104,34 @@ def update_tracking_staples(order_num, tracking_num, invoice_num, service, drive
         tracking_selection.select_by_visible_text("FedEx Ground")
 
     # find ship quantity field and enter 1, nothing else yet.
-    read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
-    qty = read_quantity[17].text
 
-    inputs = driver.find_elements(By.TAG_NAME, 'input')
-    ship_quantity = inputs[30]
-    ship_quantity.send_keys(qty)
-    ship_quantity.submit()
+    read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
+
+    ship_status = read_quantity[9].text
+    # target = driver.find_element(By.T)
+    # print(qty)
+    # print(read_quantity[7].id)
+    # print(ship_status)
+    print(len(read_quantity))
+
+    advantage_size_of_single_line = 20
+    quill_size_of_single_line = 22
+
+    if len(read_quantity) == advantage_size_of_single_line or quill_size_of_single_line :
+        inputs = driver.find_elements(By.TAG_NAME, 'input')
+        if len(read_quantity) == advantage_size_of_single_line:
+            qty = read_quantity[7].text
+            ship_quantity = inputs[30]
+        else:
+            qty = read_quantity[8].text
+            ship_quantity = inputs[30]
+        ship_quantity.send_keys(qty)
+        ship_quantity.submit()
+        # print("single")
+    else:
+        # print("multi")
+        raise TypeError("NoSuchElementException")
+
 
 def update_tracking_bbb(order_num, tracking_num, service, driver):
     external = driver.find_element_by_id("quicksearchCriteria")
