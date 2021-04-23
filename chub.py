@@ -86,7 +86,11 @@ def update_tracking_staples(order_num, tracking_num, invoice_num, service, drive
     number = ''.join([letter for letter in url if letter.isdigit()])
 
     inv_input = driver.find_element_by_name("order(" + number + ").invoicenumber")
+    print(type(invoice_num))
+    invoice_num2 = invoice_num.split(".")[0]
+    print(invoice_num2)
     inv_input.send_keys(invoice_num)
+    print(invoice_num)
 
     tracking = driver.find_element_by_name("order("+number+").box(1).trackingnumber")
     tracking.send_keys(tracking_num)                                                       #variable replacement
@@ -108,25 +112,27 @@ def update_tracking_staples(order_num, tracking_num, invoice_num, service, drive
     read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
 
     ship_status = read_quantity[9].text
-    # target = driver.find_element(By.T)
-    # print(qty)
-    # print(read_quantity[7].id)
-    # print(ship_status)
+    #target = driver.find_element(By.T)
+
+    print(read_quantity[7].id)
+    print(ship_status)
     print(len(read_quantity))
 
     advantage_size_of_single_line = 20
     quill_size_of_single_line = 22
 
-    if len(read_quantity) == advantage_size_of_single_line or quill_size_of_single_line :
+    if (len(read_quantity) == advantage_size_of_single_line) or (len(read_quantity) == quill_size_of_single_line):
         inputs = driver.find_elements(By.TAG_NAME, 'input')
         if len(read_quantity) == advantage_size_of_single_line:
             qty = read_quantity[7].text
+            print(qty)
             ship_quantity = inputs[30]
         else:
             qty = read_quantity[8].text
+            print(qty)
             ship_quantity = inputs[30]
         ship_quantity.send_keys(qty)
-        ship_quantity.submit()
+        #ship_quantity.submit()
         # print("single")
     else:
         # print("multi")
