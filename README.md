@@ -14,4 +14,4 @@ App used to automate the process of uploading tracking and invoice information i
 1. Instal Python 3.7
 2. Install all files in repo into one folder. 
 3. Ensure chrome driver version matches Chrome browser version installed in local PC. 
-4. python exporter.py
+4. `python exporter.py`
