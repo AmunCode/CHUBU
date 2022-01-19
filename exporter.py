@@ -74,5 +74,5 @@ while launch_driver:
         error_file.write("\n".join(list(error_array)))
 
     launch_driver = False
-# site.close()
+site.close()
 

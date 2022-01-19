@@ -18,13 +18,14 @@ def login(login_id, login_password, driver):
     username = driver.find_element_by_id("username")
     username.clear()
     username.send_keys(login_id)
+    driver.find_element_by_name("action").click()
+    time.sleep(2)
 
     # enter user password
     password = driver.find_element_by_id("password")
     password.clear()
     password.send_keys(login_password)
-
-    driver.find_element_by_name("submit").click()
+    driver.find_element_by_name("action").click()
     time.sleep(6)
 
 
