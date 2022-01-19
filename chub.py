@@ -12,8 +12,16 @@ def launch_driver():
     return driver
 
 
-def login(login_id, login_password, driver):
-    # enter username
+def login(login_id: str, login_password: str, driver: object):
+    """
+    Login with username and password.
+
+    Parameters:
+        login_id: string with the username
+        login_password: string with the password
+        driver: the instance of chrome drive to be used
+
+    """
     time.sleep(2)
     username = driver.find_element_by_id("username")
     username.clear()
@@ -29,7 +37,21 @@ def login(login_id, login_password, driver):
     time.sleep(6)
 
 
-def update_tracking_macys(order_num, tracking_num, service, driver):
+def update_tracking_macys(order_num: str, tracking_num: str, service: str, driver: object):
+    """updates the Macy's orders
+
+    The tracking number, carrier service type are updated to a Macy's orders.
+
+    Parameters:
+        order_num: string with the order number
+        tracking_num: string with the tracking number for the package
+        service: string with the type of shipping service used
+        driver: instance of chrome driver to be used
+
+    Return:
+        No return generated
+
+    """
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -70,7 +92,22 @@ def update_tracking_macys(order_num, tracking_num, service, driver):
     ship_quantity.submit()
 
 
-def update_tracking_staples(order_num, tracking_num, invoice_num, service, driver):
+def update_tracking_staples(order_num: str, tracking_num: str, invoice_num: str, service: str, driver: any):
+    """updates Staples or Quill orders
+
+    The tracking number and carrier service are updated on a Staples or Quill order
+
+     Parameters:
+        order_num: string containing the Staples order number
+        tracking_num: string containing the tracking number for the order
+        invoice_num: string containing the invoice number of the order
+        service: string containing the type of carrier service used
+        driver: instance of the Chrome driver to be used
+
+     Return:
+        No return generated
+
+    """
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -113,7 +150,6 @@ def update_tracking_staples(order_num, tracking_num, invoice_num, service, drive
     read_quantity = driver.find_elements(By.CLASS_NAME, 'or_numericdata')
 
     ship_status = read_quantity[9].text
-    #target = driver.find_element(By.T)
 
     print(read_quantity[7].id)
     print(ship_status)
@@ -140,7 +176,21 @@ def update_tracking_staples(order_num, tracking_num, invoice_num, service, drive
         raise TypeError("NoSuchElementException")
 
 
-def update_tracking_bbb(order_num, tracking_num, service, driver):
+def update_tracking_bbb(order_num: str, tracking_num: str, service: str, driver: any):
+    """updates Bed Bath and Beyond (BBB) orders
+
+        The tracking number and carrier service are updated on a BBB order
+
+         Parameters:
+            order_num: string containing the BBB order number
+            tracking_num: string containing the tracking number for the order
+            service: string containing the type of carrier service used
+            driver: instance of the Chrome driver to be used
+
+         Return:
+            No return generated
+
+        """
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -182,6 +232,20 @@ def update_tracking_bbb(order_num, tracking_num, service, driver):
 
 
 def update_invoice_macys(order_num, invoice_num, driver):
+    """updates the Macy's orders
+
+        The invoice number is updated to a Macy's order.
+
+        Parameters:
+            order_num: string with the order number
+            invoice_num: string containing the invoice number of the Macy's order
+            driver: instance of chrome driver to be used
+
+        Return:
+            No return generated
+
+        """
+
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
@@ -211,6 +275,19 @@ def update_invoice_macys(order_num, invoice_num, driver):
 
 
 def update_invoice_bbb(order_num, invoice_num, driver):
+    """updates the Bed Bath and Beyond orders
+
+            The invoice number is updated to a BBB order.
+
+            Parameters:
+                order_num: string with the order number
+                invoice_num: string containing the invoice number of the BBB order
+                driver: instance of chrome driver to be used
+
+            Return:
+                No return generated
+
+            """
     external = driver.find_element_by_id("quicksearchCriteria")
     external.clear()
     external.send_keys(order_num)  # replaced with variable
