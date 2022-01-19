@@ -316,6 +316,7 @@ def update_invoice_bbb(order_num, invoice_num, driver):
 
 
 def make_dropbox():
+    """create a folder for error file."""
     path = os.getcwd()
     dropbox = "/dropbox"
     try:
