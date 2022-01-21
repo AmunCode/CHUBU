@@ -18,4 +18,5 @@ App used to automate the process of uploading tracking and invoice information i
 5. `python exporter.py`
 
 # Demo Images
-![Chrome controlled program](https://user-images.githubusercontent.com/55643060/150469150-a5dec48f-d519-494d-8677-2ed194c0530e.png)
+Chrome under the control of app.
+![Chrome controlled program](https://user-images.githubusercontent.com/55643060/150470495-d560d78b-b9fc-412a-9ff9-7d7edc27a7f0.png)
