@@ -14,4 +14,8 @@ App used to automate the process of uploading tracking and invoice information i
 1. Instal Python 3.7
 2. Install all files in repo into one folder. 
 3. Ensure chrome driver version matches Chrome browser version installed in local PC. 
-4. `python exporter.py`
+4. Place data in in an excel file named 'orders.xlsx'. See sample file for formating guidelines. 
+5. `python exporter.py`
+
+# Demo Images
+![Chrome controlled program](https://user-images.githubusercontent.com/55643060/150469150-a5dec48f-d519-494d-8677-2ed194c0530e.png)
